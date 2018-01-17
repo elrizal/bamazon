@@ -45,14 +45,14 @@ function askId(){
 			message: "Order: (by item ID no.)",
 			type: "input",
 			validate: function validateName(name) {
-				console.log(name);
+				
 				var reg = /^\d+$/;
 				return reg.test(name) || "should be a number";
 		    
  			 }
 		}, 
 	]).then(answers => { //ONCE THE USER SELECTS, DO THIS:
-		console.log(answers);
+		
 		var indexNumber = answers.item_id - 1;
 		console.log(indexNumber);
 		console.log("You Selected: " + productsArray[indexNumber].item_id + " | " + productsArray[indexNumber].product_name + 
@@ -64,7 +64,6 @@ function askId(){
 		message: "Enter the number of items you would want to order",
 		type: "input",
 		validate: function validateName(name) {
-				console.log(name);
 				var reg = /^\d+$/;
 				return reg.test(name) || "should be a number";
  		}
@@ -72,11 +71,9 @@ function askId(){
 	]).then(answers => {
     console.log(answers);
 	function checkStock(){
-		if (answers.item_id > answers.stock_quantity){
-			//if the user's order qu is more than the quant
-			console.log("out of stock!");
+		if (answers.item_id + answers.stock_quantity < 1){
 			
-			//prevent user from going further
+			console.log("out of stock!");
 		}
 		else{
 			console.log("in stock");
@@ -85,22 +82,33 @@ function askId(){
 				message: "Order this item?",
 				type: 'confirm' }
 				]).then(answers => {
-   				console.log("You ordered " + productsArray[indexNumber].product_name );
-	   			connection.connect(function(err) {
-				  if (err) throw err;
-				  var sql = `UPDATE products SET item_id = ${productsArray[indexNumber].item_id} WHERE stock_quantity = ${productsArray[indexNumber].stock_quantity}`;
 
-				 connection.query(sql, function (err, result) {
-				    if (err) throw err;
-				    console.log(result.affectedRows + " record(s) updated");
-				  });
-				});
-
+			function updateStock() {
+			  console.log("Updating...\n");
+			  var query = connection.query(
+			    "UPDATE products SET product_name WHERE stock_quantity",
+			    [
+			      {
+			        stock_quantity: 100 - productsArray[indexNumber]
+			      },
+			      {
+			        product_name: productsArray[indexNumber]
+			      }
+			    ],
+			     function(err, res) {
+     			console.log("You ordered a " + productsArray[indexNumber].product_name);
+      // Call updateProduct AFTER the INSERT completes
+      // updateProduct();
+   				 }
+			  );
+			  console.log(query.sql);
+			}
+			updateStock();
 		});
 		}
-		//****function to change the database info
 	}
 	checkStock();
+
 });
 
 		
