@@ -8,7 +8,7 @@ CREATE TABLE products(
   item_id INTEGER(11) AUTO_INCREMENT NOT NULL,
   product_name VARCHAR(30),
   department_name VARCHAR(30),
-  item_price DECIMAL(10, 4),
+  item_price DECIMAL(10, 3),
   stock_quantity INTEGER(0)
   -- Creates a boolean column called "mastered" which will automatically fill --
   -- with true when a new row is made and the value isn't otherwise defined. --
